@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
+#include "commands.h"
 
 namespace fs = std::filesystem;
 

@@ -1,9 +1,11 @@
 #include <iostream>
-#include "list.h"
+#include "app.h"
+#include <unordered_map>
+#include <string>
+#include <memory>
+#include <functional>
 
 int main() {
-    ProcessList processList;
-    processList.listing();
-    processList.processkill();
-    return 0;
+    App app;
+    app.start(); 
 }

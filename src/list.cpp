@@ -37,14 +37,10 @@ void ProcessList::processkill(){
     std::cout << "Enter the PID of the process to terminate: ";
     std::cin >> pid;
 
-    if (kill(pid, SIGTERM) == 0) {
-        std::cout << "Process " << pid << " terminated gracefully." << std::endl;
+    if (kill(pid, SIGKILL) == 0) {
+         std::cout << "Process " << pid << " terminated." << std::endl;
     } else {
-        std::cerr << "Failed to terminate process " << pid << " gracefully. Trying SIGKILL." << std::endl;
-        if (kill(pid, SIGKILL) == 0) {
-             std::cout << "Process " << pid << " terminated immediately." << std::endl;
-        } else {
-            std::cerr << "Failed to terminate process " << pid << "." << std::endl;
+        std::cerr << "Failed to terminate process " << pid << "." << std::endl;
         }
     }
-}
+
