@@ -7,7 +7,8 @@
 Make sure you have Qt with: 
 
 ```sh 
-sudo apt install qt5-qmake qtbase5-dev and sudo apt update 
+sudo apt install qt5-qmake qtbase5-dev
+sudo apt update 
 ```
 
 Execute these commands in the Linux command line:
