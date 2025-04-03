@@ -5,7 +5,10 @@
 
 class App {
 public:
-    int start();
+    int start(int argc, char *argv[]);;
+private:
+    int argc;
+    char *argv[];
 };
 
 #endif // APP_H

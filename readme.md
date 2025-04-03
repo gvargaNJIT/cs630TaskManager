@@ -4,11 +4,18 @@
 
 ### To start program in bash:
 
-Step 1:
-g++ -Iinclude -o process_list src/main.cpp src/list.cpp src/commands.cpp src/app.cpp -std=c++17
+Make sure you have Qt with: 
 
-Step 2:
-./a.out
+```sh 
+sudo apt install qt5-qmake qtbase5-dev and sudo apt update 
+```
 
-Step 3:
-A list of processes will come up. To execute a command, type: sudo ./process_list
+Execute these commands in the Linux command line:
+
+```sh
+qmake project_manager.pro
+make
+./project_manager
+```
+
+Then you can type a PID number from the list and check status on it or terminate it. You can also refresh the PID list as well.

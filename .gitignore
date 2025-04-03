@@ -1,4 +1,8 @@
 process_list
-a.out
 .vscode
 build
+*.o
+*.out
+project_manager
+Makefile
+.qmake.stash

@@ -1,35 +1,90 @@
+#include <QApplication>
+#include <QWidget>
+#include <QPushButton>
+#include <QTextEdit>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QString>
 #include <iostream>
-#include "list.h"
-#include "commands.h"
-#include "app.h"
-#include <unordered_map>
-#include <string>
-#include <memory>
-#include <functional>
-#include <algorithm>
-#include <cctype>
-#include <locale>
+#include "include/list.h"
+#include "include/commands.h"
+#include "include/app.h"
+#include <vector>
 
+int App::start(int argc, char *argv[]) {
+    QApplication app(argc, argv);
 
-int App::start() {
     ProcessList processList;
-    processList.listing(); 
-
     CommandList commandList;
 
-    commandList.register_command("terminate", std::bind(&ProcessList::processkill, std::ref(processList)));
-    commandList.register_command("refresh", std::bind(&ProcessList::listing, std::ref(processList)));
-    commandList.register_command("status", std::bind(&ProcessList::monitorProcess, std::ref(processList)));
+    QWidget window;
+    QVBoxLayout layout(&window);
 
-    std::string user_input;
+    QTextEdit processListTextEdit(&window);
+    processListTextEdit.setReadOnly(true);
+    layout.addWidget(&processListTextEdit);
 
-    while (true) {
-        std::cout << "Enter a command: ";
-        std::cin >> user_input;
-        if (user_input == "exit") {
-            break;
+    QTextEdit statusTextEdit(&window);
+    statusTextEdit.setReadOnly(true);
+    layout.addWidget(&statusTextEdit);
+    statusTextEdit.setFixedHeight(100);
+
+    auto updateProcessList = [&processList, &processListTextEdit]() {
+        processListTextEdit.clear();
+        std::vector<std::pair<pid_t, std::string>> processes = processList.listing();
+        for (const auto& process : processes) {
+            QString processInfo = "PID: " + QString::number(process.first) + " | " + QString::fromStdString(process.second);
+            processListTextEdit.append(processInfo);
         }
-        commandList.execute_command(user_input);
-    }
-    return 0;
+    };
+
+    updateProcessList();
+
+    QPushButton terminateButton("Terminate", &window);
+    QPushButton statusButton("Status", &window);
+    QPushButton refreshButton("Refresh", &window);
+    layout.addWidget(&terminateButton);
+    layout.addWidget(&statusButton);
+    layout.addWidget(&refreshButton);
+
+    QLineEdit pidInput(&window);
+    pidInput.setPlaceholderText("Enter PID here...");
+    layout.addWidget(&pidInput);
+
+    QObject::connect(&refreshButton, &QPushButton::clicked, [&]() {
+        updateProcessList();
+        statusTextEdit.append("Process list refreshed.");
+    });
+
+    QObject::connect(&terminateButton, &QPushButton::clicked, [&]() {
+        bool ok;
+        int pid = pidInput.text().toInt(&ok);
+        if (ok) {
+            processList.processkill(pid);
+            statusTextEdit.append("Terminated process: " + QString::number(pid));
+        } else {
+            statusTextEdit.append("Invalid PID entered.");
+        }
+    });
+
+    QObject::connect(&statusButton, &QPushButton::clicked, [&]() {
+        bool ok;
+        int pid = pidInput.text().toInt(&ok);
+        if (ok) {
+            std::string status = processList.monitorProcess(pid) ? "Running" : "Terminated";
+            statusTextEdit.append("Process " + QString::number(pid) + " is " + QString::fromStdString(status));
+        } else {
+            statusTextEdit.append("Invalid PID entered.");
+        }
+    });
+
+    window.setWindowTitle("Process Manager");
+    window.setMinimumSize(300, 800);
+    window.show();
+
+    return app.exec();
 }
+
+

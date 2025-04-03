@@ -15,9 +15,9 @@ class ProcessList {
 public:
     ProcessList();
     ~ProcessList();
-    void listing();
-    void processkill();
-    void monitorProcess();
+    std::vector<std::pair<pid_t, std::string>> listing();
+    void processkill(pid_t pid);
+    bool monitorProcess(pid_t pid);
 };
 
 #endif // PROCESS_LIST_H

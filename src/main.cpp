@@ -1,11 +1,12 @@
 #include <iostream>
-#include "app.h"
+#include "include/app.h"
 #include <unordered_map>
 #include <string>
 #include <memory>
 #include <functional>
 
-int main() {
+int main(int argc, char *argv[]) {  // argc and argv are available here
     App app;
-    app.start(); 
+    return app.start(argc, argv);   // Pass them to start()
 }
+

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "commands.h"
+#include "include/commands.h"
 
 std::unordered_map<std::string, std::function<void()>> commands;
 
