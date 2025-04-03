@@ -18,6 +18,8 @@ int App::start() {
     CommandList commandList;
 
     commandList.register_command("terminate", std::bind(&ProcessList::processkill, std::ref(processList)));
+    commandList.register_command("refresh", std::bind(&ProcessList::listing, std::ref(processList)));
+    commandList.register_command("status", std::bind(&ProcessList::monitorProcess, std::ref(processList)));
 
     std::string user_input;
 

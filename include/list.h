@@ -17,6 +17,7 @@ public:
     ~ProcessList();
     void listing();
     void processkill();
+    void monitorProcess();
 };
 
 #endif // PROCESS_LIST_H
