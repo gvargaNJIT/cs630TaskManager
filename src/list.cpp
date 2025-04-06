@@ -52,6 +52,23 @@ void ProcessList::processkill(pid_t pid) {
 }
 
 bool ProcessList::monitorProcess(pid_t pid) {
-    return kill(pid, 0) == 0;
+    char path[256];
+    snprintf(path, sizeof(path), "/proc/%d/stat", pid);
+    FILE* file = fopen(path, "r");
+    if (!file) {
+        return false;
+    }
+
+    char state;
+    char comm[256];
+    int read_pid;
+
+    if (fscanf(file, "%d %255s %c", &read_pid, comm, &state) != 3) {
+        fclose(file);
+        return false;
+    }
+
+    fclose(file);
+    return state != 'Z' && state != 'X';
 }
 
