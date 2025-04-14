@@ -4,7 +4,9 @@
 
 ### To start program in bash:
 
-Make sure you have Qt with: 
+For this project, I was using WSL2 and Ubuntu so if not using that make sure the Linux libraries are downloaded and a g++ complier. 
+
+Make sure you have Qt on Ubuntu with: 
 
 ```sh 
 sudo apt install qt5-qmake qtbase5-dev
