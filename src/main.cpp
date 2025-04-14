@@ -5,8 +5,8 @@
 #include <memory>
 #include <functional>
 
-int main(int argc, char *argv[]) {  // argc and argv are available here
+int main(int argc, char *argv[]) {
     App app;
-    return app.start(argc, argv);   // Pass them to start()
+    return app.start(argc, argv);
 }
 
