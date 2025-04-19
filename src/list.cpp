@@ -52,10 +52,31 @@ void ProcessList::processkill(pid_t pid) {
 }
 
 bool ProcessList::monitorProcess(pid_t pid) {
+    mqd_t mq;
+    struct mq_attr attr{};
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = 10;
+    attr.mq_msgsize = sizeof(Message);
+    attr.mq_curmsgs = 0;
+    
+    mq = mq_open(QUEUE_NAME, O_RDWR | O_CREAT, 0644, &attr);
+    if (mq == -1) {
+        perror("mq_open");
+        return false;
+    }
+
+    Message msg;
+    msg.pid = pid;
+
     char path[256];
     snprintf(path, sizeof(path), "/proc/%d/stat", pid);
     FILE* file = fopen(path, "r");
+
     if (!file) {
+        strcpy(msg.status, "not found");
+        mq_send(mq, (char*)&msg, sizeof(msg), 0);
+        mq_close(mq);
+        mq_unlink(QUEUE_NAME);
         return false;
     }
 
@@ -65,10 +86,26 @@ bool ProcessList::monitorProcess(pid_t pid) {
 
     if (fscanf(file, "%d %255s %c", &read_pid, comm, &state) != 3) {
         fclose(file);
+        strcpy(msg.status, "invalid");
+        mq_send(mq, (char*)&msg, sizeof(msg), 0);
+        mq_close(mq);
+        mq_unlink(QUEUE_NAME);
         return false;
     }
 
     fclose(file);
-    return state != 'Z' && state != 'X';
-}
 
+    if (state == 'Z' || state == 'X') {
+        strcpy(msg.status, "dead");
+        mq_send(mq, (char*)&msg, sizeof(msg), 0);
+        mq_close(mq);
+        mq_unlink(QUEUE_NAME);
+        return false;
+    }
+
+    strcpy(msg.status, "alive");
+    mq_send(mq, (char*)&msg, sizeof(msg), 0);
+    mq_close(mq);
+    mq_unlink(QUEUE_NAME);
+    return true;
+}

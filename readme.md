@@ -22,3 +22,7 @@ make
 ```
 
 Then you can type a PID number from the list and check status on it or terminate it. You can also refresh the PID list as well.
+
+[Github Page](https://github.com/gvargaNJIT/cs630TaskManager)
+
+[Written and Video Overview](doc.md)
